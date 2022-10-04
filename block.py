@@ -10,20 +10,32 @@ class Block:
         self.__date = date
         self.__transactions = transactions
         self.__prev_hash = prev_hash
+        self.__nonce = 0
         self.__hash = self.calculate_hash()
+        
         
 
     def calculate_hash(self):
         date = str(self.__date).encode()
         transactions = str(self.__transactions).encode()
         prev_hash = self.__prev_hash.hexdigest().encode() if self.__prev_hash else str(None).encode()
-        return hashlib.sha256(date + transactions + prev_hash)
+        nonce = str(self.__nonce).encode()
+        return hashlib.sha256(date + transactions + prev_hash + nonce)
+
+    def mine_block(self, difficulty):
+        while self.__hash.hexdigest()[0:difficulty] != "0" * difficulty:
+            self.__nonce += 1
+            self.__hash = self.calculate_hash()
+
+
 
     def get_hash(self):
         return self.__hash
     
     def get_prev_hash(self):
         return self.__prev_hash
+
+
 
     def __str__(self):
         if self.__prev_hash is None:
