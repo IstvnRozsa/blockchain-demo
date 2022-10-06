@@ -2,6 +2,8 @@ from datetime import datetime
 from gettext import translation
 import hashlib
 from transaction import Transaction
+from wallet import Wallet
+
 
 
 
@@ -35,7 +37,12 @@ class Block:
     def get_prev_hash(self):
         return self.__prev_hash
 
+    def set_prev_hash(self, _hash):
+        self.__prev_hash = _hash
 
+    # Only for test
+    def change_block_data(self):
+        self.__transactions = Transaction("Bob", "Bob", 100000)
 
     def __str__(self):
         if self.__prev_hash is None:
@@ -46,9 +53,16 @@ class Block:
 
 
 if __name__ == "__main__":
-    b1 = Block(date = datetime.now(), transactions = Transaction(sender="Takasima", receiver="Yakamoto", amount=50))
-    b2 = Block(date = datetime.now(), transactions = Transaction(sender="Feri", receiver="Imre", amount=25), prev_hash = b1.get_hash())
-    b3 = Block(date = datetime.now(),transactions= Transaction(sender="Timea", receiver="Eniko", amount=25), prev_hash =  b2.get_hash())
+    
+    bob_wallet = Wallet("Bob")
+    jack_wallet = Wallet("Jack")
+    transaction1 = Transaction(bob_wallet, jack_wallet, 10)
+    transaction2 = Transaction(jack_wallet, bob_wallet, 10)
+    transaction3 = Transaction(jack_wallet, bob_wallet, 15)
+
+    b1 = Block(date = datetime.now(), transactions = transaction1.transaction_hash)
+    b2 = Block(date = datetime.now(), transactions = transaction2.transaction_hash, prev_hash = b1.get_hash())
+    b3 = Block(date = datetime.now(),transactions= transaction3.transaction_hash, prev_hash =  b2.get_hash())
     print(b1)
     print(b2)
     print(b3)
