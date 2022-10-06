@@ -2,10 +2,12 @@ from block import Block
 from transaction import Transaction
 from datetime import datetime
 
+from wallet import Wallet
+
 class BlockChain:
     def __init__(self):
         # Genesis block
-        self.__chain = [Block(datetime.now(),Transaction("Alice", "Bob", 100))]
+        self.__chain = [Block(datetime.now(),"Genesis")]
         self.__difficulty = 4
         if self.__chain[0].get_prev_hash() is None:
             self.__chain[0].mine_block(self.__difficulty)
@@ -37,23 +39,26 @@ class BlockChain:
         return True
 
     # Only for test
-    def change_chain(self):
-        self.__chain[0].change_block_data()
+    def change_chain(self, i:int, to_wallet:Wallet, amount:int):
+        self.__chain[i].change_block_data(to_wallet, amount)
 
 
 
 if __name__ == "__main__":
     pityuCoin = BlockChain()
     
-    pityuCoin.add_block(Block(datetime.now(), Transaction("Takamoto", "Jomashita", 100)))
-    pityuCoin.add_block(Block(datetime.now(), Transaction("Yakashima", "Takamoto", 50)))
+    bob_wallet = Wallet("Bob")
+    jack_wallet = Wallet("Jack")
+    transaction1 = Transaction(bob_wallet, jack_wallet, 10)
+    transaction2 = Transaction(jack_wallet, bob_wallet, 10)
+    pityuCoin.add_block(Block(datetime.now(), transaction1.transaction_hash, [transaction1]))
+    pityuCoin.add_block(Block(datetime.now(), transaction2.transaction_hash, [transaction2]))
     pityuCoin.show_chain()
     print(f"Is Chain Valid? {pityuCoin.is_chain_valid()}")
 
-    pityuCoin.change_chain()
 
-    pityuCoin.add_block(Block(datetime.now(), Transaction("Takamoto", "Jomashita", 80)))
-    pityuCoin.add_block(Block(datetime.now(), Transaction("Yakashima", "Takamoto", 50)))
+    hacker_wallet = Wallet("Hacker")
+    pityuCoin.change_chain(1, hacker_wallet, 250)
     pityuCoin.show_chain()
     print(f"Is Chain Valid? {pityuCoin.is_chain_valid()}")
 

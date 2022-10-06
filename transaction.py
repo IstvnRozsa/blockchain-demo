@@ -1,15 +1,17 @@
 import rsa
 import hashlib
+from wallet import Wallet
 
 
 
 class Transaction:
-    def __init__(self, sender, receiver, amount):
+    def __init__(self, sender:Wallet, receiver:Wallet, amount):
         self.__sender = sender 
         self.__receiver = receiver
         self.__amount = amount
-        self.signature = None
         self.transaction_hash = self.calculate_hash()
+        self.signature = rsa.sign(self.transaction_hash.encode(), self.__sender.private_key, "SHA-256")
+        
 
     def calculate_hash(self):
         senderpk = str(self.__sender.public_key).encode()
@@ -29,9 +31,6 @@ class Transaction:
     def get_amount(self):
         return self.__amount
 
-    def sign_transaction(self, wallet):
-        self.signature = rsa.sign(self.transaction_hash.encode(), wallet.private_key, "SHA-256")
-
     def is_valid(self):
         try:
             rsa.verify(self.transaction_hash.encode(), self.signature, self.__sender.public_key)
@@ -40,8 +39,8 @@ class Transaction:
             return False
     
     # Only test
-    def hack_transaction(self, wallet):
-        self.__amount = 1000000
+    def hack_transaction(self, wallet, amount:int):
+        self.__amount = amount
         self.__receiver = wallet
         self.transaction_hash = self.calculate_hash()
 
@@ -54,14 +53,12 @@ if __name__=="__main__":
     jack_wallet = Wallet("Jack")
 
     transaction = Transaction(bob_wallet, jack_wallet, 10)
-    
-    transaction.sign_transaction(bob_wallet)
     print(transaction)
     print(f"Transaction valid?: {transaction.is_valid()}")
 
     print("-"*30)
     hacker_wallet = Wallet("Hacker")
-    transaction.hack_transaction(hacker_wallet)
+    transaction.hack_transaction(hacker_wallet, 100000)
     print(transaction)
     print(f"Transaction valid?: {transaction.is_valid()}")
 
