@@ -23,8 +23,11 @@ class BlockChain:
         self.__chain.append(new_block)
 
     def show_chain(self):
+        print("-"*10 + "Start" +"-"*10)
         for block in self.__chain:
+            print("-"*10)
             print(block)
+            block.show_transactions()
 
     def is_chain_valid(self):
         for index, block in enumerate(self.__chain):
@@ -35,6 +38,7 @@ class BlockChain:
                 return False
             if current_block.get_prev_hash() is not None:
                 if current_block.get_prev_hash().hexdigest() != previous_block.get_hash().hexdigest():
+                    print("Corrupt Block: ", previous_block)
                     return False
         return True
 

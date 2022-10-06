@@ -3,6 +3,7 @@ from gettext import translation
 import hashlib
 from transaction import Transaction
 from wallet import Wallet
+from merkle import MerkleTree
 
 
 
@@ -10,13 +11,22 @@ from wallet import Wallet
 class Block:
     def __init__(self, date, transactionhash, transaction_list = None, prev_hash=None):
         self.__date = date
-        self.__transactionhash = transactionhash
         self.transaction_list = transaction_list
+        self.__transactionhash = self.get_mtreenode()
+        #self.__transactionhash = transactionhash
         self.__prev_hash = prev_hash
         self.__nonce = 0
         self.__hash = self.calculate_hash()
         
+    def get_mtreenode(self):
+        if self.transaction_list is None:
+            return "Genesis"
         
+        hash_list = []
+        for transaction in self.transaction_list:
+            hash_list.append(transaction.transaction_hash)
+        mtree = MerkleTree(hash_list)
+        return mtree.getRootHash()
 
     def calculate_hash(self):
         date = str(self.__date).encode()
@@ -43,13 +53,23 @@ class Block:
 
     # Only for test
     def change_block_data(self, to_wallet, amount):
+        #Itt meg folytatni kene
         self.transaction_list[0].hack_transaction(to_wallet, amount)
         self.__transactionhash = self.transaction_list[0].transaction_hash 
+        self.__hash = self.calculate_hash()
 
     def __str__(self):
         if self.__prev_hash is None:
             return f"Block: {self.get_hash().hexdigest()}; Transaction Hash: {self.__transactionhash}; Previous hash: {None}"
         return f"Block: {self.get_hash().hexdigest()}; Transaction Hash: {self.__transactionhash}; Previous hash: {self.get_prev_hash().hexdigest()}"
+
+    def show_transactions(self):
+        if self.transaction_list is None:
+            print("Genesis transaction")
+        else:
+            for transaction in self.transaction_list:
+                print(transaction)
+
         
 
 
@@ -70,6 +90,10 @@ if __name__ == "__main__":
     print(b3)
 
     hacker_wallet = Wallet("Hacker")
-    print("*")
+    print("*"*30)
     b2.change_block_data(hacker_wallet, 20)
     print(b2)
+
+
+    print("*"*30)
+    print(b3.get_mtreenode())
