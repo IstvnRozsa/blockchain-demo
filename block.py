@@ -15,6 +15,7 @@ class Block:
         self.__transactionhash = self.get_mtreenode()
         #self.__transactionhash = transactionhash
         self.__prev_hash = prev_hash
+        self.__series = 0
         self.__nonce = 0
         self.__hash = self.calculate_hash()
         
@@ -51,6 +52,11 @@ class Block:
     def set_prev_hash(self, _hash):
         self.__prev_hash = _hash
 
+    def get_series(self):
+        return self.__series
+    def set_series(self, series):
+        self.__series = series
+
     # Only for test
     def change_block_data(self, to_wallet, amount):
         #Itt meg folytatni kene
@@ -60,8 +66,8 @@ class Block:
 
     def __str__(self):
         if self.__prev_hash is None:
-            return f"Block: {self.get_hash().hexdigest()};\nTransaction Hash: {self.__transactionhash};\nPrevious hash: {None}"
-        return f"Block: {self.get_hash().hexdigest()};\nTransaction Hash: {self.__transactionhash};\nPrevious hash: {self.get_prev_hash().hexdigest()}"
+            return f"Series: {self.__series};\nBlock: {self.get_hash().hexdigest()};\nTransaction Hash: {self.__transactionhash};\nPrevious hash: {None};\nNonce: {self.__nonce};"
+        return f"Series: {self.__series};\nBlock: {self.get_hash().hexdigest()};\nTransaction Hash: {self.__transactionhash};\nPrevious hash: {self.get_prev_hash().hexdigest()}"
 
     def show_transactions(self):
         if self.transaction_list is None:
@@ -84,7 +90,9 @@ if __name__ == "__main__":
 
     b1 = Block(date = datetime.now(), transactionhash = transaction1.transaction_hash, transaction_list=[transaction1])
     b2 = Block(date = datetime.now(), transactionhash = transaction2.transaction_hash, transaction_list=[transaction2], prev_hash = b1.get_hash())
-    b3 = Block(date = datetime.now(), transactionhash = transaction3.transaction_hash, transaction_list=[transaction3], prev_hash =  b2.get_hash())
+    b2.set_series(1)
+    b3 = Block(date = datetime.now(), transactionhash = transaction3.transaction_hash, transaction_list=[transaction3], prev_hash = b2.get_hash())
+    b3.set_series(2)
     print(b1)
     print(b2)
     print(b3)

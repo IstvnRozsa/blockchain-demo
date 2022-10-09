@@ -19,6 +19,7 @@ class BlockChain:
 
     def add_block(self, new_block):
         new_block.set_prev_hash(self.get_last_block().get_hash())
+        new_block.set_series(self.get_last_block().get_series()+1)
         new_block.mine_block(self.__difficulty)
         self.__chain.append(new_block)
 
