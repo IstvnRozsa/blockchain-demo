@@ -38,7 +38,7 @@ class BlockChain:
                 return False
             if current_block.get_prev_hash() is not None:
                 if current_block.get_prev_hash().hexdigest() != previous_block.get_hash().hexdigest():
-                    print("Corrupt Block: ", previous_block)
+                    # itt fut bele print("Corrupt Block:\n", previous_block)
                     return False
         return True
 

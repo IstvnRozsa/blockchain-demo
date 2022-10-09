@@ -60,8 +60,8 @@ class Block:
 
     def __str__(self):
         if self.__prev_hash is None:
-            return f"Block: {self.get_hash().hexdigest()}; Transaction Hash: {self.__transactionhash}; Previous hash: {None}"
-        return f"Block: {self.get_hash().hexdigest()}; Transaction Hash: {self.__transactionhash}; Previous hash: {self.get_prev_hash().hexdigest()}"
+            return f"Block: {self.get_hash().hexdigest()};\nTransaction Hash: {self.__transactionhash};\nPrevious hash: {None}"
+        return f"Block: {self.get_hash().hexdigest()};\nTransaction Hash: {self.__transactionhash};\nPrevious hash: {self.get_prev_hash().hexdigest()}"
 
     def show_transactions(self):
         if self.transaction_list is None:

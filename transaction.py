@@ -20,7 +20,7 @@ class Transaction:
         return hashlib.sha256(senderpk + receiverpk + amount).hexdigest()
 
     def __str__(self) -> str:
-        return f"{self.__sender.name} sent {self.__amount} coins to {self.__receiver.name}."
+        return f"- {self.__sender.name} sent {self.__amount} coins to {self.__receiver.name}."
     
     def get_sender(self):
         return self.__sender
